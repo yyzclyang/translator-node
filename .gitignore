@@ -8,6 +8,8 @@
 out
 gen
 .vscode
+/src/private.ts
+
 ### Node template
 # Logs
 logs
