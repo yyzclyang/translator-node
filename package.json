@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
+  "bin": {
+    "yfy": "src/cli.ts"
+  },
   "scripts": {
     "start": "npx ts-node-dev src/main.ts"
   },
@@ -16,8 +19,8 @@
   },
   "dependencies": {
     "@types/commander": "^2.12.2",
-    "@types/sha256": "^0.2.0",
+    "@types/md5": "^2.1.33",
     "commander": "^3.0.2",
-    "sha256": "^0.2.0"
+    "md5": "^2.2.1"
   }
 }
