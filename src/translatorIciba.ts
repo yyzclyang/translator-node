@@ -41,7 +41,7 @@ const translatorIciba = (word: string): Promise<PromiseResultType> => {
       const data: IcibaResult = response.data;
       if (data.word_name) {
         return {
-          status: "rejected",
+          status: "fulfilled",
           result: {
             query: data.word_name,
             translationResult: data.symbols
@@ -49,7 +49,7 @@ const translatorIciba = (word: string): Promise<PromiseResultType> => {
         };
       } else {
         return {
-          status: "fulfilled",
+          status: "rejected",
           result: {
             errorCode: "101",
             errorMSG: "服务器繁忙"

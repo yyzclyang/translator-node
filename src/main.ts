@@ -1,3 +1,4 @@
+import colors = require("colors");
 import { translatorBaidu } from "./translatorBaidu";
 import {
   IcibaTranslationText,
@@ -15,56 +16,79 @@ type IcibaTranslationResult = Array<{
   ph_am?: string;
 }>;
 
+type PromiseResult = {
+  errorCode?: string;
+  errorMSG?: string;
+  query?: string;
+  translationResult?: BaiduTranslationResult | IcibaTranslationResult;
+};
 export type PromiseResultType = {
   status: string;
-  result: {
-    errorCode?: string;
-    errorMSG?: string;
-    query?: string;
-    translationResult?: BaiduTranslationResult | IcibaTranslationResult;
-  };
+  result: PromiseResult;
 };
 
 const isEnglish = (query: string) => {
   return /[a-zA-Z]/.test(query[0]);
 };
 
-const logBaiduResult = (query: string, result: BaiduTranslationResult) => {
-  console.log(`  ${query}  ~ baidu.com\n`);
-  console.log(`  - ${result}`);
+const logBaiduResult = (query: string, promiseResult: PromiseResultType) => {
+  console.log(`  ${colors.blue(query)}  ~ baidu.com\n`);
+  const result = promiseResult.result;
+  if (promiseResult.status === "rejected") {
+    return console.log(`  ${colors.red.bold(`${result.errorMSG}`)}`);
+  }
+  console.log(`  - ${colors.cyan(result.translationResult + "")}`);
 };
 
-const logIcibaResult = (query: string, result: IcibaTranslationResult) => {
-  console.log(`  ${query}  ~ iciba.com\n`);
+const logIcibaResult = (query: string, promiseResult: PromiseResultType) => {
+  console.log(`  ${colors.blue(query)}  ~ iciba.com\n`);
+  const result = promiseResult.result;
+  const translationResult = result.translationResult;
+  if (promiseResult.status === "rejected") {
+    return console.log(`  ${colors.red.bold(`${result.errorMSG}`)}`);
+  }
   if (isEnglish(query)) {
-    result.map(translation => {
-      console.log(`  英 [ ${translation.ph_en} ]  美 [ ${translation.ph_am} ]`);
+    (translationResult as IcibaTranslationResult).map(translation => {
+      console.log(
+        `  英 ${colors.red(`[ ${translation.ph_en} ]`)}  美 ${colors.red(
+          `[ ${translation.ph_am} ]`
+        )}`
+      );
       translation.parts.map(explainTerms => {
-        console.log(`  - ${explainTerms.part}  ${explainTerms.means}`);
+        console.log(
+          `  - ${colors.cyan(`${explainTerms.part}  ${explainTerms.means}`)}`
+        );
       });
     });
   } else {
-    result.map(translation => {
-      console.log(`  拼音 [ ${translation.word_symbol} ]`);
+    (translationResult as IcibaTranslationResult).map(translation => {
+      console.log(`  拼音 ${colors.red(`[ ${translation.word_symbol} ]`)}`);
       translation.parts.map(explainTerms => {
         explainTerms.means.map(explain => {
-          console.log(`  - ${(explain as IcibaZHTranslation).word_mean}`);
+          console.log(
+            `  - ${colors.cyan((explain as IcibaZHTranslation).word_mean)}`
+          );
         });
       });
     });
   }
-  console.log("\n  ----------  \n");
+};
+
+const logFailResult = (errorCode: string, errorMSG: string) => {
+  console.log(errorMSG);
 };
 
 const translator = (word: string) => {
-  translatorBaidu(word).then(res => {
-    logBaiduResult(word, res.result
-      .translationResult as BaiduTranslationResult);
-  });
-  translatorIciba(word).then(res => {
-    logIcibaResult(word, res.result
-      .translationResult as IcibaTranslationResult);
-  });
+  const logResult = [logBaiduResult, logIcibaResult];
+
+  Promise.all([translatorBaidu(word), translatorIciba(word)]).then(
+    translationResponses => {
+      translationResponses.map((translationResponse, index) => {
+        logResult[index](word, translationResponse);
+        console.log("\n  ----------  \n");
+      });
+    }
+  );
 };
 
 export { translator };
