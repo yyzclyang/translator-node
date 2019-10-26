@@ -1,14 +1,17 @@
 {
   "name": "translator-node",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "dist/main.js",
   "license": "MIT",
   "bin": {
-    "yfy": "src/cli.ts"
+    "yfy": "dist/cli.js"
   },
   "scripts": {
     "start": "npx ts-node-dev src/main.ts"
   },
+  "files": [
+    "dist/**/*.js"
+  ],
   "devDependencies": {
     "@types/node": "^12.11.5",
     "@types/prettier": "^1.18.3",
