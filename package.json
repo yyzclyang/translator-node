@@ -21,8 +21,9 @@
     "typescript": "^3.6.4"
   },
   "dependencies": {
-    "@types/commander": "^2.12.2",
+    "@types/axios": "^0.14.0",
     "@types/md5": "^2.1.33",
+    "axios": "^0.19.0",
     "commander": "^3.0.2",
     "md5": "^2.2.1"
   }

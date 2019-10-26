@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import * as commander from "commander";
-import { translate } from "./main";
+import { translator } from "./main";
 
 const program = new commander.Command();
 
@@ -10,7 +10,7 @@ program
   .usage("<word>")
   .arguments("<word>")
   .action(word => {
-    translate(word);
+    translator(word);
   });
 
 program.parse(process.argv);
